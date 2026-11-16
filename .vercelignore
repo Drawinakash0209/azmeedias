@@ -1,0 +1,8 @@
+# Not needed on Vercel: it installs and builds from source.
+/node_modules
+/dist
+# Original hero film (source file only; the site serves public/video/).
+# The leading slash matters: plain `video` would also exclude public/video.
+/video
+.env
+.env.local
