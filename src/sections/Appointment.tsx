@@ -1,8 +1,8 @@
 import { useEffect, useId, useRef, useState, type FormEvent, type ReactNode } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
-import { ArrowRight, ChevronDown, Mail, MessageCircle } from 'lucide-react'
-import { mailtoUrl, site, whatsappUrl } from '../config/site'
-import { suitTypes } from '../data/content'
+import { ArrowRight, ChevronDown, MessageCircle, Phone } from 'lucide-react'
+import { placeholders, site, telUrl, whatsappUrl } from '../config/site'
+import { enquiryTypes } from '../data/content'
 import {
   appointmentMessage,
   emptyAppointment,
@@ -12,10 +12,10 @@ import {
   type AppointmentErrors,
   type AppointmentValues,
 } from '../lib/appointment'
-import { goldButton } from '../components/ui/Button'
+import { button } from '../components/ui/Button'
 import { ParallaxImage } from '../components/ui/ParallaxImage'
 import { Reveal } from '../components/ui/Reveal'
-import { SectionHeading } from '../components/ui/SectionHeading'
+import { SectionBar, SectionHeading } from '../components/ui/SectionHeading'
 import { cn } from '../lib/cn'
 
 /**
@@ -28,9 +28,9 @@ import { cn } from '../lib/cn'
 type Status = 'idle' | 'sending' | 'sent' | 'ready' | 'error'
 
 const ENDPOINT = import.meta.env.VITE_APPOINTMENT_ENDPOINT as string | undefined
-const fieldOrder: Array<keyof AppointmentValues> = ['name', 'phone', 'email', 'date', 'type', 'message']
+const fieldOrder: Array<keyof AppointmentValues> = ['name', 'phone', 'date', 'type', 'message']
 const control =
-  'peer w-full border-b border-ivory/20 bg-transparent py-3 text-lg font-light text-ivory outline-none transition-colors duration-500 placeholder:text-ivory/25 hover:border-ivory/40 focus:border-gold aria-[invalid=true]:border-[#d98e7a]'
+  'peer w-full border-b border-ink/15 bg-transparent py-3 text-lg font-light text-ink outline-none transition-colors duration-500 placeholder:text-ink/30 hover:border-ink/40 focus:border-gold-deep aria-[invalid=true]:border-[#b5523b]'
 
 type FieldProps = {
   label: string
@@ -45,12 +45,12 @@ function Field({ label, error, optional, className, children }: FieldProps) {
   const errorId = `${id}-error`
   return (
     <div className={className}>
-      <label htmlFor={id} className="eyebrow flex justify-between text-ivory/55">
+      <label htmlFor={id} className="eyebrow flex justify-between text-stone">
         {label}
-        {optional && <span className="tracking-[0.2em] text-ivory/30">Optional</span>}
+        {optional && <span className="tracking-[0.2em] text-stone/60">Optional</span>}
       </label>
       {children({ id, 'aria-invalid': !!error, 'aria-describedby': error ? errorId : undefined })}
-      <p id={errorId} role={error ? 'alert' : undefined} className="mt-2 min-h-5 text-sm text-[#e0a08d]">
+      <p id={errorId} role={error ? 'alert' : undefined} className="mt-2 min-h-5 text-sm text-[#a8452f]">
         {error}
       </p>
     </div>
@@ -135,46 +135,63 @@ export function Appointment({ preselectedType }: Props) {
   }
 
   return (
-    <section id="appointment" aria-labelledby="appointment-title" className="relative bg-ink py-28 md:py-44">
-      <div className="mx-auto grid max-w-[1680px] gap-y-20 px-6 md:px-12 lg:grid-cols-12 lg:gap-x-10">
-        <div className="lg:col-span-5">
-          <SectionHeading
-            index="05"
-            label="Appointments"
-            id="appointment-title"
-            lines={['Your Perfect Fit', 'Begins Here.']}
-          />
-          <Reveal as="p" className="mt-10 max-w-md font-serif text-2xl leading-snug text-ivory/80 italic">
-            “Every great suit begins with a conversation. Let us create something that is uniquely yours.”
+    <section id="appointment" aria-labelledby="appointment-title" className="relative bg-cream">
+      <SectionBar index="08" label="Appointments" />
+      <div className="mx-auto max-w-[1600px] px-5 pt-20 md:px-10 md:pt-28">
+        <SectionHeading id="appointment-title" lines={[['Book an', 'appointment']]} />
+      </div>
+      <div className="mx-auto grid max-w-[1600px] gap-y-14 px-5 pt-14 pb-24 md:px-10 md:pt-20 md:pb-32 lg:grid-cols-12 lg:gap-x-10">
+        <div className="lg:col-span-4">
+          <Reveal as="p" className="max-w-sm text-[0.95rem] leading-[1.6] text-stone">
+            Tell us what you need and roughly when. We&rsquo;ll reply to confirm a time for your first consultation.
           </Reveal>
 
           <Reveal className="mt-12">
-            <a
-              href={whatsappUrl(`Hello ${site.name}, I would like to arrange an appointment.`)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group inline-flex items-center gap-5"
-            >
-              <span className="flex size-12 items-center justify-center rounded-full border border-gold/50 text-gold transition-colors duration-500 ease-lux group-hover:bg-gold group-hover:text-ink">
-                <MessageCircle size={18} strokeWidth={1.25} aria-hidden="true" />
-              </span>
-              <span>
-                <span className="eyebrow block text-ivory/50">Prefer to talk?</span>
-                <span className="link-line mt-1 inline-block font-serif text-xl">Message us on WhatsApp</span>
-              </span>
-            </a>
+            <div className="flex flex-col gap-6">
+              <a href={telUrl() ?? '#contact'} className="group inline-flex items-center gap-5">
+                <span className="flex size-12 items-center justify-center rounded-full border border-ink/20 text-ink transition-colors duration-500 ease-lux group-hover:border-ink group-hover:bg-ink group-hover:text-paper">
+                  <Phone size={17} strokeWidth={1.25} aria-hidden="true" />
+                </span>
+                <span>
+                  <span className="eyebrow block text-stone">Prefer to talk?</span>
+                  <span className="link-line mt-1 inline-block text-[1.1rem]">Call {site.phone ?? placeholders.phone}</span>
+                </span>
+              </a>
+              <a
+                href={whatsappUrl(`Hello ${site.name}, I would like to arrange an appointment.`)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group inline-flex items-center gap-5"
+              >
+                <span className="flex size-12 items-center justify-center rounded-full border border-ink/20 text-ink transition-colors duration-500 ease-lux group-hover:border-ink group-hover:bg-ink group-hover:text-paper">
+                  <MessageCircle size={18} strokeWidth={1.25} aria-hidden="true" />
+                </span>
+                <span>
+                  <span className="eyebrow block text-stone">Or message us</span>
+                  <span className="link-line mt-1 inline-block text-[1.1rem]">WhatsApp</span>
+                </span>
+              </a>
+            </div>
           </Reveal>
 
-          <ParallaxImage
-            name="appointment"
-            alt="A black tailored suit and tie displayed on a mannequin in front of a brick wall"
-            sizes="(min-width: 1024px) 26vw, 0px"
-            position="50% 30%"
-            className="mt-20 hidden aspect-[3/4] w-[62%] lg:block"
-          />
+          <div className="mt-16 hidden grid-cols-2 gap-4 lg:grid">
+            <ParallaxImage
+              name="bridal-lace-sheer"
+              alt="Close view of floral lace on a wedding gown"
+              sizes="(min-width: 1024px) 18vw, 0px"
+              className="aspect-[4/5]"
+            />
+            <ParallaxImage
+              name="appointment"
+              alt="A black tailored suit and tie displayed on a mannequin"
+              sizes="(min-width: 1024px) 18vw, 0px"
+              position="50% 30%"
+              className="aspect-[4/5]"
+            />
+          </div>
         </div>
 
-        <div className="lg:col-span-6 lg:col-start-7 lg:pt-6">
+        <div className="border border-ink/15 bg-white p-6 sm:p-9 md:p-12 lg:col-span-8 lg:self-start">
           <AnimatePresence mode="wait" initial={false}>
             {showForm ? (
               <motion.form
@@ -219,22 +236,6 @@ export function Appointment({ preselectedType }: Props) {
                   )}
                 </Field>
 
-                <Field label="Email Address" error={errors.email}>
-                  {(a) => (
-                    <input
-                      {...a}
-                      name="email"
-                      type="email"
-                      inputMode="email"
-                      autoComplete="email"
-                      required
-                      value={values.email}
-                      onChange={set('email')}
-                      onBlur={blur('email')}
-                      className={control}
-                    />
-                  )}
-                </Field>
 
                 <Field label="Preferred Appointment Date" error={errors.date}>
                   {(a) => (
@@ -247,12 +248,12 @@ export function Appointment({ preselectedType }: Props) {
                       value={values.date}
                       onChange={set('date')}
                       onBlur={blur('date')}
-                      className={cn(control, 'min-h-[3.25rem] appearance-none', !values.date && 'text-ivory/40')}
+                      className={cn(control, 'min-h-[3.25rem] appearance-none', !values.date && 'text-stone')}
                     />
                   )}
                 </Field>
 
-                <Field label="Type of Suit" error={errors.type}>
+                <Field label="What are you looking for?" error={errors.type} className="sm:col-span-2">
                   {(a) => (
                     <div className="relative">
                       <select
@@ -262,13 +263,13 @@ export function Appointment({ preselectedType }: Props) {
                         value={values.type}
                         onChange={set('type')}
                         onBlur={blur('type')}
-                        className={cn(control, 'min-h-[3.25rem] appearance-none pr-8', !values.type && 'text-ivory/40')}
+                        className={cn(control, 'min-h-[3.25rem] appearance-none pr-8', !values.type && 'text-stone')}
                       >
                         <option value="" disabled>
                           Select
                         </option>
-                        {suitTypes.map((t) => (
-                          <option key={t} value={t} className="bg-coal text-ivory">
+                        {enquiryTypes.map((t) => (
+                          <option key={t} value={t}>
                             {t}
                           </option>
                         ))}
@@ -277,7 +278,7 @@ export function Appointment({ preselectedType }: Props) {
                         size={16}
                         strokeWidth={1.25}
                         aria-hidden="true"
-                        className="pointer-events-none absolute top-1/2 right-0 -translate-y-1/2 text-gold"
+                        className="pointer-events-none absolute top-1/2 right-0 -translate-y-1/2 text-gold-deep"
                       />
                     </div>
                   )}
@@ -299,11 +300,11 @@ export function Appointment({ preselectedType }: Props) {
                 </Field>
 
                 <div className="mt-2 flex flex-col gap-6 sm:col-span-2 sm:flex-row sm:items-center sm:justify-between">
-                  <p className="max-w-xs text-sm leading-relaxed text-ivory/45">
+                  <p className="max-w-xs text-sm leading-relaxed text-stone">
                     Submitting sends a request. Your appointment is confirmed only once we reply to you directly.
                   </p>
-                  <button type="submit" disabled={status === 'sending'} className={goldButton('md', 'shrink-0')}>
-                    <span className="relative">{status === 'sending' ? 'Sending…' : 'Request Appointment'}</span>
+                  <button type="submit" disabled={status === 'sending'} className={button('dark', 'md', 'shrink-0')}>
+                    <span className="relative">{status === 'sending' ? 'Sending…' : 'Request a Consultation'}</span>
                     <ArrowRight size={14} strokeWidth={1.5} aria-hidden="true" className="relative" />
                   </button>
                 </div>
@@ -314,51 +315,50 @@ export function Appointment({ preselectedType }: Props) {
                 ref={result}
                 tabIndex={-1}
                 role="status"
-                className="border border-ivory/10 bg-coal p-8 outline-none md:p-12"
+                className="outline-none"
                 {...fade}
               >
                 {status === 'sent' ? (
                   <>
-                    <p className="eyebrow text-gold">Request received</p>
-                    <h3 className="mt-6 font-serif text-4xl leading-tight font-light md:text-5xl">
+                    <p className="eyebrow text-gold-deep">Request received</p>
+                    <h3 className="display mt-6 text-4xl md:text-5xl">
                       Thank you, {values.name.trim().split(/\s+/)[0]}.
                     </h3>
-                    <p className="mt-6 max-w-md leading-relaxed text-ivory/65">
-                      Your request has been sent. This is not yet a confirmed appointment — we will contact you to
+                    <p className="mt-6 max-w-md leading-relaxed text-stone">
+                      Your request has been sent. This is not a confirmed appointment yet. We will contact you to
                       confirm a date and time.
                     </p>
                   </>
                 ) : (
                   <>
-                    <p className="eyebrow text-gold">{status === 'error' ? 'Unable to send' : 'One final step'}</p>
-                    <h3 className="mt-6 font-serif text-4xl leading-tight font-light md:text-5xl">
+                    <p className="eyebrow text-gold-deep">{status === 'error' ? 'Unable to send' : 'One final step'}</p>
+                    <h3 className="display mt-6 text-4xl md:text-5xl">
                       Your request is ready to send.
                     </h3>
-                    <p className="mt-6 max-w-md leading-relaxed text-ivory/65">
+                    <p className="mt-6 max-w-md leading-relaxed text-stone">
                       {status === 'error'
                         ? 'We could not submit your request online, so nothing has been sent yet. '
                         : 'Nothing has been sent yet. '}
-                      Choose how you would like to send it to us — your appointment is confirmed only once we reply.
+                      Send it to us on WhatsApp, or call us. Your appointment is confirmed once we reply.
                     </p>
-                    {!site.whatsapp && !site.email && (
-                      <p className="mt-4 max-w-md text-sm leading-relaxed text-ivory/45">
-                        Our contact details have not been added to this website yet, so you will be asked to choose
-                        the recipient yourself.
+                    {!site.whatsapp && (
+                      <p className="mt-4 max-w-md text-sm leading-relaxed text-stone">
+                        Our WhatsApp number has not been added to this website yet, so you will be asked to choose
+                        the chat yourself.
                       </p>
                     )}
                   </>
                 )}
 
-                <dl className="mt-10 grid gap-x-10 gap-y-5 border-t border-ivory/10 pt-8 sm:grid-cols-2">
+                <dl className="mt-10 grid gap-x-10 gap-y-5 border-t border-ink/10 pt-8 sm:grid-cols-2">
                   {[
                     ['Preferred date', formatDate(values.date)],
-                    ['Type of suit', values.type],
+                    ['Looking for', values.type],
                     ['Phone', values.phone.trim()],
-                    ['Email', values.email.trim()],
                   ].map(([k, v]) => (
                     <div key={k}>
-                      <dt className="eyebrow text-ivory/45">{k}</dt>
-                      <dd className="mt-2 font-serif text-xl break-words">{v}</dd>
+                      <dt className="eyebrow text-stone">{k}</dt>
+                      <dd className="mt-2 text-[1.1rem] break-words">{v}</dd>
                     </div>
                   ))}
                 </dl>
@@ -366,20 +366,20 @@ export function Appointment({ preselectedType }: Props) {
                 <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center">
                   {status !== 'sent' && (
                     <>
-                      <a href={whatsappUrl(message)} target="_blank" rel="noopener noreferrer" className={goldButton()}>
+                      <a href={whatsappUrl(message)} target="_blank" rel="noopener noreferrer" className={button('dark')}>
                         <MessageCircle size={15} strokeWidth={1.5} aria-hidden="true" className="relative" />
                         <span className="relative">Send via WhatsApp</span>
                       </a>
-                      <a href={mailtoUrl(`Appointment request — ${values.name.trim()}`, message)} className={goldButton()}>
-                        <Mail size={15} strokeWidth={1.5} aria-hidden="true" className="relative" />
-                        <span className="relative">Send via Email</span>
+                      <a href={telUrl() ?? '#contact'} className={button('outline')}>
+                        <Phone size={15} strokeWidth={1.5} aria-hidden="true" className="relative" />
+                        <span className="relative">Call us</span>
                       </a>
                     </>
                   )}
                   <button
                     type="button"
                     onClick={status === 'sent' ? reset : () => setStatus('idle')}
-                    className="eyebrow link-line self-start text-ivory/60 sm:ml-2 sm:self-auto"
+                    className="eyebrow link-line self-start text-stone sm:ml-2 sm:self-auto"
                   >
                     {status === 'sent' ? 'Make another request' : 'Edit details'}
                   </button>

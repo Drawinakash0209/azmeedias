@@ -3,7 +3,6 @@ import { site } from '../config/site'
 export type AppointmentValues = {
   name: string
   phone: string
-  email: string
   date: string
   type: string
   message: string
@@ -11,7 +10,7 @@ export type AppointmentValues = {
 
 export type AppointmentErrors = Partial<Record<keyof AppointmentValues, string>>
 
-export const emptyAppointment: AppointmentValues = { name: '', phone: '', email: '', date: '', type: '', message: '' }
+export const emptyAppointment: AppointmentValues = { name: '', phone: '', date: '', type: '', message: '' }
 
 /** Today in the visitor's own timezone, as YYYY-MM-DD (the <input type="date"> format). */
 export function todayISO() {
@@ -29,14 +28,12 @@ export function validateAppointment(v: AppointmentValues): AppointmentErrors {
   else if (!/^\+?[\d\s().-]+$/.test(v.phone.trim()) || phoneDigits.length < 7 || phoneDigits.length > 15)
     e.phone = 'Please enter a valid phone number, including the area or country code.'
 
-  if (!v.email.trim()) e.email = 'Please enter your email address.'
-  else if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.email.trim())) e.email = 'Please enter a valid email address.'
 
   if (!v.date) e.date = 'Please choose a preferred date.'
   else if (Number.isNaN(Date.parse(v.date))) e.date = 'Please enter a valid date.'
   else if (v.date < todayISO()) e.date = 'Please choose today or a future date.'
 
-  if (!v.type) e.type = 'Please select a type of suit.'
+  if (!v.type) e.type = 'Please choose what you are looking for.'
 
   if (v.message.length > 1000) e.message = 'Please keep your message under 1,000 characters.'
 
@@ -53,16 +50,15 @@ export function formatDate(iso: string) {
   })
 }
 
-/** Plain-text request used for the WhatsApp and email hand-off. */
+/** Plain-text request used for the WhatsApp hand-off. */
 export function appointmentMessage(v: AppointmentValues) {
   return [
-    `Appointment request — ${site.name}`,
+    `Appointment request for ${site.name}`,
     '',
     `Name: ${v.name.trim()}`,
     `Phone: ${v.phone.trim()}`,
-    `Email: ${v.email.trim()}`,
     `Preferred date: ${formatDate(v.date)}`,
-    `Type of suit: ${v.type}`,
+    `Looking for: ${v.type}`,
     v.message.trim() && `Message: ${v.message.trim()}`,
   ]
     .filter((line): line is string => typeof line === 'string')

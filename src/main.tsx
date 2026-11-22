@@ -1,11 +1,10 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import '@fontsource/cormorant-garamond/latin-300.css'
-import '@fontsource/cormorant-garamond/latin-400.css'
-import '@fontsource/cormorant-garamond/latin-300-italic.css'
-import '@fontsource/cormorant-garamond/latin-400-italic.css'
-import '@fontsource/jost/latin-300.css'
-import '@fontsource/jost/latin-400.css'
+import '@fontsource/inter-tight/latin-300.css'
+import '@fontsource/inter-tight/latin-400.css'
+import '@fontsource/inter-tight/latin-500.css'
+// Wordmark only
+import '@fontsource/bodoni-moda/latin-400.css'
 import './index.css'
 import App from './App'
 

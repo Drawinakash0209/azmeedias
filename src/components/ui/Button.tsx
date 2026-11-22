@@ -1,16 +1,35 @@
 import { cn } from '../../lib/cn'
 
+type Variant = 'dark' | 'light' | 'outline' | 'outline-light'
+
+const variants: Record<Variant, string> = {
+  dark: 'bg-ink text-paper hover:bg-gold-deep',
+  light: 'bg-ivory text-ink hover:bg-gold',
+  outline: 'border border-ink/30 text-ink hover:border-ink hover:bg-ink hover:text-paper',
+  'outline-light': 'border border-ivory/40 text-ivory hover:border-ivory hover:bg-ivory hover:text-ink',
+}
+
 /**
- * Shared look for the gold outline call-to-action.
- * Apply to an <a> or <button> and wrap the label in <span className="relative">.
+ * Rectangular button. Apply to an <a> or <button>.
+ * It sets `inline-flex`, so control visibility on a wrapper rather than with `hidden`.
  */
-export const goldButton = (size: 'sm' | 'md' = 'md', className?: string) =>
+export const button = (variant: Variant = 'dark', size: 'sm' | 'md' = 'md', className?: string) =>
   cn(
-    'eyebrow group/btn relative inline-flex items-center justify-center gap-3 overflow-hidden border border-gold/60 text-gold',
-    'transition-colors duration-500 ease-lux hover:border-gold hover:text-ink focus-visible:text-ink',
-    'before:absolute before:inset-0 before:translate-y-[101%] before:bg-gold before:transition-transform before:duration-500 before:ease-lux',
-    'hover:before:translate-y-0 focus-visible:before:translate-y-0',
+    'inline-flex items-center justify-center gap-2.5 text-[0.875rem] whitespace-nowrap',
+    'transition-[background-color,color,border-color] duration-500 ease-lux',
     'disabled:pointer-events-none disabled:opacity-50',
-    size === 'sm' ? 'px-5 py-3' : 'px-8 py-4',
+    size === 'sm' ? 'h-10 px-5' : 'h-12 px-7',
+    variants[variant],
+    className,
+  )
+
+/** Circular outline button, e.g. "Book now". */
+export const circle = (dark = false, className?: string) =>
+  cn(
+    'inline-flex size-28 shrink-0 items-center justify-center rounded-full border text-center text-[0.95rem] leading-tight md:size-36 md:text-[1.05rem]',
+    'transition-[background-color,color,border-color,transform] duration-700 ease-lux hover:scale-[1.04]',
+    dark
+      ? 'border-ivory/60 text-ivory hover:border-ivory hover:bg-ivory hover:text-ink'
+      : 'border-ink/40 text-ink hover:border-ink hover:bg-ink hover:text-paper',
     className,
   )

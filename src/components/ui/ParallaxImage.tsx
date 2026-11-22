@@ -52,7 +52,7 @@ export function ParallaxImage({ name, alt, sizes, className, imgClassName, posit
   }, [unveil])
 
   return (
-    <div ref={wrap} className={cn('relative overflow-hidden bg-coal', className)}>
+    <div ref={wrap} className={cn('relative overflow-hidden bg-sand', className)}>
       <img
         ref={img}
         src={imageSrc(name)}

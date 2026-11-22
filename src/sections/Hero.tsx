@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { gsap, prefersReducedMotion } from '../lib/gsap'
 import { site } from '../config/site'
 import { AnchorLink } from '../components/ui/AnchorLink'
-import { goldButton } from '../components/ui/Button'
+import { button } from '../components/ui/Button'
 import { cn } from '../lib/cn'
 
 /**
@@ -29,8 +29,8 @@ const FILM = {
 const SCROLL_LENGTH = 1.5
 
 const captions = [
-  { id: 'detail', index: '02', label: 'The Detail', lines: ['Nothing is', 'overlooked.'], from: 0.215, to: 0.435 },
-  { id: 'silhouette', index: '03', label: 'The Silhouette', lines: ['Cut around you,', 'and no one else.'], from: 0.47, to: 0.64 },
+  { id: 'detail', index: '02', label: 'Detail', lines: ['Fabric, fit', 'and finish'], from: 0.215, to: 0.435 },
+  { id: 'silhouette', index: '03', label: 'Fit', lines: ['Cut to your', 'measurements'], from: 0.47, to: 0.64 },
 ] as const
 
 /** When the opening caption leaves, and when the final reveal arrives. */
@@ -201,7 +201,7 @@ export function Hero() {
       ref={section}
       id="home"
       aria-label="Introduction"
-      className={cn('relative bg-ink', !scrub && 'h-svh min-h-[620px]')}
+      className={cn('relative bg-ink text-ivory', !scrub && 'h-svh min-h-[620px]')}
       // Pinned for SCROLL_LENGTH viewports: the stage below sticks while this taller section scrolls past.
       style={scrub ? { height: `${(1 + SCROLL_LENGTH) * 100}svh` } : undefined}
     >
@@ -241,9 +241,9 @@ export function Hero() {
             {scrub && (
               <>
                 <div data-caption="opening" className="absolute inset-x-6 bottom-12 md:inset-x-12 md:bottom-16">
-                  <CaptionLabel index="01" label="The Art of Bespoke Tailoring" intro />
-                  <p className="mt-6 font-serif text-[clamp(2.2rem,4.8vw,4.75rem)] leading-[1.04] font-light">
-                    {['It begins with', 'a single line.'].map((line) => (
+                  <CaptionLabel index="01" label="Bridal & groom" intro />
+                  <p className="display mt-5 text-[clamp(2.4rem,5.6vw,5.4rem)]">
+                    {['Wedding clothes,', 'made to measure'].map((line) => (
                       <span key={line} className="-mb-[0.12em] block overflow-hidden pb-[0.12em]">
                         <span data-intro-line className="block">
                           {line}
@@ -260,7 +260,7 @@ export function Hero() {
                     className="absolute inset-x-6 bottom-12 opacity-0 md:inset-x-12 md:bottom-16"
                   >
                     <CaptionLabel index={c.index} label={c.label} />
-                    <p className="mt-6 font-serif text-[clamp(2.2rem,4.8vw,4.75rem)] leading-[1.04] font-light">
+                    <p className="display mt-5 text-[clamp(2.4rem,5.6vw,5.4rem)]">
                       {c.lines.map((line) => (
                         <span key={line} className="block">
                           {line}
@@ -275,16 +275,15 @@ export function Hero() {
             {/* Final reveal. In scrub mode it arrives with the last shot; otherwise it is the whole hero. */}
             <div data-final className="max-w-full">
               <p className="overflow-hidden">
-                <span data-final-line className="eyebrow flex items-center gap-4 text-gold">
-                  <span aria-hidden="true" className="h-px w-10 bg-gold/60" />
-                  {scrub ? `Bespoke Tailoring · ${site.location}` : 'The Art of Bespoke Tailoring'}
+                <span data-final-line className="block text-[0.875rem] text-ivory/70">
+                  {`${site.descriptor} · ${site.location}`}
                 </span>
               </p>
 
               <h1
                 className={cn(
                   'mt-6 overflow-hidden pb-[0.08em] font-serif leading-[0.88] font-light tracking-[0.02em]',
-                  scrub ? 'text-[clamp(2.7rem,10vw,9.5rem)]' : 'text-[clamp(2.7rem,11.5vw,11rem)]',
+                  scrub ? 'text-[clamp(2.4rem,8.4vw,8rem)]' : 'text-[clamp(2.4rem,10vw,9.5rem)]',
                 )}
               >
                 <span data-final-line className="block">
@@ -296,13 +295,13 @@ export function Hero() {
                 {/* The scrubbed footage carries the tagline itself, so it is not set a second time on top of it. */}
                 <p
                   data-final-fade
-                  className={cn('font-serif text-xl text-ivory/85 italic md:text-2xl', scrub && 'sr-only')}
+                  className={cn('text-[1.05rem] text-ivory/80', scrub && 'sr-only')}
                 >
                   “{site.tagline}”
                 </p>
                 <div data-final-fade>
-                  <AnchorLink to="craft" className={goldButton()}>
-                    <span className="relative">Discover Our Craft</span>
+                  <AnchorLink to="collections" className={button('light')}>
+                    Explore the Collections
                   </AnchorLink>
                 </div>
               </div>
@@ -335,9 +334,8 @@ export function Hero() {
 function CaptionLabel({ index, label, intro = false }: { index: string; label: string; intro?: boolean }) {
   return (
     <p className="overflow-hidden">
-      <span {...(intro ? { 'data-intro-line': '' } : {})} className="eyebrow flex items-center gap-4 text-gold">
-        <span aria-hidden="true">{index}</span>
-        <span aria-hidden="true" className="h-px w-10 bg-gold/60" />
+      <span {...(intro ? { 'data-intro-line': '' } : {})} className="flex gap-3 text-[0.875rem] text-ivory/70">
+        <span aria-hidden="true" className="tabular-nums">({index})</span>
         {label}
       </span>
     </p>
